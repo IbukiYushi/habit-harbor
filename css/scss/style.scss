@@ -109,6 +109,7 @@ body {
       > .matrix-inner {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        // scroll-behavior: smooth;
         border: 2px solid v.$color-border;
         border-radius: 4px;
         margin-inline: auto;

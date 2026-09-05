@@ -24,6 +24,7 @@ class HabitTracker {
     this.renderHeader();
     this.renderMatrix();
     this.bindEvents();
+    this.scrollToToday();
   }
 
   // ------------------------------------------
@@ -546,6 +547,7 @@ class HabitTracker {
     this.saveSettings();
     this.renderHeader();
     this.renderMatrix();
+    this.scrollToToday();
   }
 
   updateCalendarView(year, month) {
@@ -554,6 +556,7 @@ class HabitTracker {
     this.saveSettings();
     this.renderHeader();
     this.renderMatrix();
+    this.scrollToToday();
   }
 
   resetAllData() {
@@ -562,6 +565,25 @@ class HabitTracker {
     localStorage.removeItem('habit_logs');
     localStorage.removeItem('habit_memos');
     location.reload();
+  }
+  // ------------------------------------------
+  // スクロール位置制御 (Scroll Position Control)
+  // ------------------------------------------
+  scrollToToday() {
+    const matrixInner = document.querySelector('.matrix-inner');
+    const todayCell = document.querySelector('#dateHeader .is-today');
+    if (!matrixInner || !todayCell) return;
+
+    const stickyCol = document.querySelector('#dateHeader .sticky-col');
+    const stickyWidth = stickyCol ? stickyCol.offsetWidth : 0;
+
+    const cellOffsetLeft = todayCell.offsetLeft;
+    const cellWidth = todayCell.offsetWidth;
+    const targetIndexOffset = 3;
+
+    const targetScrollLeft = cellOffsetLeft - (cellWidth * targetIndexOffset) - stickyWidth;
+
+    matrixInner.scrollLeft = Math.max(0, targetScrollLeft);
   }
 }
 
