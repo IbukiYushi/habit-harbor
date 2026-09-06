@@ -386,6 +386,11 @@ body > dialog[open] > .modal-card > .modal-header > .modal-title h3 {
   text-align: center;
   width: 80%;
 }
+@media screen and (max-width: 576px) {
+  body > dialog[open] > .modal-card > .modal-header > .modal-title h3 span {
+    display: block;
+  }
+}
 body > dialog[open] > .modal-card > .modal-header > .modal-close-icon-button {
   position: absolute;
   top: 8px;

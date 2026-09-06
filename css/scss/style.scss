@@ -294,7 +294,11 @@ body {
           align-items: center;
           padding-top: 24px;
           padding-bottom: 16px;
-          h3 { text-align: center; width: 80%; }
+          h3 {
+            text-align: center;
+            width: 80%;
+            span { @include m.media-query('sm') { display: block; } }
+          }
         }
         > .modal-close-icon-button {
           position: absolute;
