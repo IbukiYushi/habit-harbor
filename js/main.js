@@ -193,9 +193,15 @@ class HabitTracker {
     document.getElementById('saveStatus').onclick = (e) => {
       e.preventDefault();
       const dialog = document.getElementById('statusDialog');
-      const selectedStatus = dialog.querySelector('input[name="status"]:checked').value;
+      const statusSelect = document.getElementById('statusSelect');
+
+      const rawValue = statusSelect.value;
+      let selectedStatus = rawValue;
+      if (rawValue === 'true') selectedStatus = true;
+      if (rawValue === 'false') selectedStatus = false;
+
       const memo = document.getElementById('memoArea').value;
-      const { date, item } = dialog.dataset; // ダイアログ自体に持たせたdatasetから安全に取得
+      const { date, item } = dialog.dataset;
       this.updateLog(date, item, selectedStatus, memo);
       dialog.close();
     };
@@ -295,8 +301,8 @@ class HabitTracker {
     const currentStatus = (logEntry && typeof logEntry === 'object') ? String(logEntry.status) : String(logEntry ?? 'none');
     const currentMemo = logEntry?.memo || "";
 
-    const radio = dialog.querySelector(`input[name="status"][value="${currentStatus}"]`);
-    if (radio) radio.checked = true;
+    const statusSelect = document.getElementById('statusSelect');
+    if (statusSelect) statusSelect.value = currentStatus;
     document.getElementById('memoArea').value = currentMemo;
 
     dialog.showModal();
@@ -388,7 +394,7 @@ class HabitTracker {
   updateLog(date, itemId, status, memo) {
     if (!this.logs[date]) this.logs[date] = {};
     this.logs[date][itemId] = {
-      status: (status === 'none') ? undefined : (status === 'true'),
+      status: (status === 'none') ? undefined : status,
       memo: memo
     };
     this.saveLogs();
