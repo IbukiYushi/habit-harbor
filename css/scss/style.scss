@@ -299,6 +299,7 @@ body {
       animation: slideInDownModalCard 0.8s ease-out forwards;
       @include m.media-query('sm') {
         width: 90svw;
+        margin-block: 12svh auto;
         opacity: 0.95;
       }
 

@@ -387,6 +387,7 @@ body > dialog[open] > .modal-card {
 @media screen and (max-width: 576px) {
   body > dialog[open] > .modal-card {
     width: 90svw;
+    margin-block: 12svh auto;
     opacity: 0.95;
   }
 }

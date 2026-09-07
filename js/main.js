@@ -205,7 +205,6 @@ class HabitTracker {
       const selectedStatus = statusSelect.value;
       const memo = document.getElementById('memoArea').value;
       const { date, item } = dialog.dataset;
-      console.log(dialog.dataset);
 
       this.updateLog(date, item, selectedStatus, memo);
       dialog.close();
@@ -608,39 +607,42 @@ class HabitTracker {
   // 旧形式（boolean）のデータを新形式（string）へ変換する
   // ------------------------------------------
   migrateLogsData() {
+    if (!this.logs || typeof this.logs !== 'object') return;
     let isUpdated = false;
 
-    Object.keys(this.logs).forEach(dateKey => {
-      const dayLog = this.logs[dateKey];
-      if (!dayLog || typeof dayLog !== 'object') return;
+    try {
+      Object.keys(this.logs).forEach(dateKey => {
+        const dayLog = this.logs[dateKey];
+        if (!dayLog || typeof dayLog !== 'object') return;
 
-      Object.keys(dayLog).forEach(itemId => {
-        const itemLog = dayLog[itemId];
-
-        // パターンA: { status: true, memo: "..." } のオブジェクト形式
-        if (itemLog && typeof itemLog === 'object') {
-          if (itemLog.status === true) {
-            itemLog.status = 'done';
-            isUpdated = true;
-          } else if (itemLog.status === false) {
-            itemLog.status = 'failed';
+        Object.keys(dayLog).forEach(itemId => {
+          const itemLog = dayLog[itemId];
+          if (itemLog === undefined || itemLog === null) return;
+          if (typeof itemLog === 'object') {
+            if (itemLog.status === true) {
+              itemLog.status = 'done';
+              isUpdated = true;
+            } else if (itemLog.status === false) {
+              itemLog.status = 'failed';
+              isUpdated = true;
+            }
+          }
+          else if (typeof itemLog === 'boolean') {
+            this.logs[dateKey][itemId] = {
+              status: itemLog ? 'done' : 'failed',
+              memo: ''
+            };
             isUpdated = true;
           }
-        } 
-        // パターンB: "item_id": true のように直で boolean が入っていた古い初期形式への配慮
-        else if (itemLog === true) {
-          this.logs[dateKey][itemId] = { status: 'done', memo: '' };
-          isUpdated = true;
-        } else if (itemLog === false) {
-          this.logs[dateKey][itemId] = { status: 'failed', memo: '' };
-          isUpdated = true;
-        }
+        });
       });
-    });
 
-    if (isUpdated) {
-      this.saveLogs();
-      console.log('旧形式のログデータを新形式（done/failed）へ自動移行しました。');
+      if (isUpdated) {
+        this.saveLogs();
+        console.log('旧形式のログデータを新形式（done/failed）へ自動移行しました。。');
+      }
+    } catch (e) {
+      console.error('マイグレーション処理中にエラーが発生しました:', e);
     }
   }
 }
