@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Habit Harbor | 楽しく続けるハビットトラッカー</title>
   <meta name="description" content="Habit Harborは、あなたの毎日の習慣化をシンプルに、楽しく応援するハビットトラッカーです。目標をチェックして、ポジティブな毎日を積み重ねましょう。">
-  
+
   <meta property="og:title" content="Habit Harbor | 楽しく続けるハビットトラッカー">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://nabel.blog/habit-harbor/images/logo-icon.png">
@@ -75,7 +75,10 @@
     <div class="modal-card">
       <div class="modal-header">
         <div class="modal-title">
-          <h3><span id="selectDayInStatusDialog"></span>の更新</h3>
+          <h3>
+            <span id="selectDayInStatusDialog"></span>
+            <span>の更新</span>
+          </h3>
         </div>
         <button type="button" class="modal-close-icon-button" aria-label="閉じる">
           <svg class="close-icon-svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
@@ -86,10 +89,16 @@
       <hr class="modal-hr">
       <div class="modal-body">
         <form class="modal-body-button-form" method="dialog">
-          <div class="modal-body-select">
-            <label><input type="radio" name="status" value="true">マル</label>
-            <label><input type="radio" name="status" value="false">バツ</label>
-            <label><input type="radio" name="status" value="none">未定</label>
+          <div class="modal-body-status-select">
+            <label for="statusSelect" class="status-select-label">進捗状態</label>
+            <div class="select-wrapper">
+              <select id="statusSelect" class="status-select-input">
+                <option value="done">◯ マル</option>
+                <option value="in_progress">△ サンカク</option>
+                <option value="failed">× バツ</option>
+                <option value="none">- 未定</option>
+              </select>
+            </div>
           </div>
           <hr>
           <div class="modal-body-comments">

@@ -109,6 +109,7 @@ body {
       > .matrix-inner {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        // scroll-behavior: smooth;
         border: 2px solid v.$color-border;
         border-radius: 4px;
         margin-inline: auto;
@@ -180,10 +181,26 @@ body {
           height: 100%;
           line-height: v.$cell-height;
           cursor: pointer;
-          &[data-status="true"]::before { content: "◯"; font-size: 1.5rem; }
-          &[data-status="false"]::before { content: "×"; font-size: 1.5rem; }
+          &[data-status="done"]::before { content: "◯"; font-size: 1.5rem; }
+          &[data-status="in_progress"]::before { content: "△"; font-size: 1.5rem; }
+          &[data-status="failed"]::before { content: "×"; font-size: 1.5rem; }
           &[data-status="none"] { background: #e0e0e0; }
-          &[data-status="undefined"] { background: #cfcfcf; }
+          &[data-status="undefined"] { background: #ffffff; }
+          &[data-status="none"][data-has-memo="true"] {
+            background: #cfcfcf;
+            // 「メモあり」を示す小さなポッチ
+            position: relative;
+            &::after {
+              content: '';
+              position: absolute;
+              top: 2px;
+              right: 2px;
+              width: 6px;
+              height: 6px;
+              background: v.$color-accent;
+              border-radius: 50%;
+            }
+          }
           @include m.hover-state(0px);
         }
 
@@ -293,7 +310,11 @@ body {
           align-items: center;
           padding-top: 24px;
           padding-bottom: 16px;
-          h3 { text-align: center; width: 80%; }
+          h3 {
+            text-align: center;
+            width: 80%;
+            span { @include m.media-query('sm') { display: block; } }
+          }
         }
         > .modal-close-icon-button {
           position: absolute;
@@ -317,12 +338,45 @@ body {
       > .modal-body {
         div {
           margin-block: 24px;
-
-          &.modal-body-select {
+          &.modal-body-status-select {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            gap: 40px;
+            gap: 8px;
+            margin-block: 20px;
+            .status-select-label { font-weight: bolder; }
+            .select-wrapper {
+              position: relative;
+              width: 180px;
+              &::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                right: 16px;
+                transform: translateY(-50%);
+                width: 0;
+                height: 0;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 6px solid v.$color-border-dark;
+                pointer-events: none;
+              }
+              .status-select-input {
+                appearance: none;
+                -webkit-appearance: none;
+                width: 100%;
+                padding: 8px 36px 8px 24px;
+                font-size: 1.1rem;
+                font-weight: bold;
+                text-align: center;
+                color: v.$color-border-dark;
+                background-color: v.$color-white;
+                border: 2px solid v.$color-border-dark;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: border-color 0.2s, box-shadow 0.2s;
+              }
+            }
           }
           &.modal-body-comments {
             display: flex;
