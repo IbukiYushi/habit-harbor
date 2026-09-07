@@ -11,6 +11,9 @@ class HabitTracker {
     this.settings = JSON.parse(localStorage.getItem('habit_settings')) ?? initialSettings;
     this.logs = JSON.parse(localStorage.getItem('habit_logs')) ?? initialLogs;
     this.memos = JSON.parse(localStorage.getItem('habit_memos')) ?? {};
+
+    // 新形式ログデータへの自動コンバート
+    this.migrateLogsData();
     
     // 編集中のステート管理
     this.currentEditingItemId = null;
@@ -580,6 +583,7 @@ class HabitTracker {
     localStorage.removeItem('habit_memos');
     location.reload();
   }
+
   // ------------------------------------------
   // スクロール位置制御 (Scroll Position Control)
   // ------------------------------------------
@@ -598,6 +602,46 @@ class HabitTracker {
     const targetScrollLeft = cellOffsetLeft - (cellWidth * targetIndexOffset) - stickyWidth;
 
     matrixInner.scrollLeft = Math.max(0, targetScrollLeft);
+  }
+
+  // ------------------------------------------
+  // 旧形式（boolean）のデータを新形式（string）へ変換する
+  // ------------------------------------------
+  migrateLogsData() {
+    let isUpdated = false;
+
+    Object.keys(this.logs).forEach(dateKey => {
+      const dayLog = this.logs[dateKey];
+      if (!dayLog || typeof dayLog !== 'object') return;
+
+      Object.keys(dayLog).forEach(itemId => {
+        const itemLog = dayLog[itemId];
+
+        // パターンA: { status: true, memo: "..." } のオブジェクト形式
+        if (itemLog && typeof itemLog === 'object') {
+          if (itemLog.status === true) {
+            itemLog.status = 'done';
+            isUpdated = true;
+          } else if (itemLog.status === false) {
+            itemLog.status = 'failed';
+            isUpdated = true;
+          }
+        } 
+        // パターンB: "item_id": true のように直で boolean が入っていた古い初期形式への配慮
+        else if (itemLog === true) {
+          this.logs[dateKey][itemId] = { status: 'done', memo: '' };
+          isUpdated = true;
+        } else if (itemLog === false) {
+          this.logs[dateKey][itemId] = { status: 'failed', memo: '' };
+          isUpdated = true;
+        }
+      });
+    });
+
+    if (isUpdated) {
+      this.saveLogs();
+      console.log('旧形式のログデータを新形式（done/failed）へ自動移行しました。');
+    }
   }
 }
 
