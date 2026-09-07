@@ -24,6 +24,6 @@ export const initialSettings = {
 
 export const initialLogs = {
   [todayKey]: {
-    "item_sample": { status: true, memo: "サンプル記録です" }
+    "item_sample": { status: "done", memo: "サンプル記録です" }
   }
 };

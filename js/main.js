@@ -99,13 +99,17 @@ class HabitTracker {
         for (let d = 1; d <= daysInMonth; d++) {
           const dateKey = `${year}-${formatDateComponent(month)}-${formatDateComponent(d)}`;
           const logEntry = this.logs?.[dateKey]?.[item.id];
-          const status = (logEntry && typeof logEntry === 'object') ? logEntry.status : (logEntry ?? 'none');
+          const status = logEntry?.status || 'none';
+          const memo = logEntry?.memo || '';
+          const hasMemo = (status === 'none' && memo.trim().length > 0);
+
           html += `<td>
                     <div 
                       class="cell-btn"
                       data-date="${dateKey}"
                       data-item="${item.id}"
-                      data-status="${status}">
+                      data-status="${status}"
+                      ${hasMemo ? 'data-has-memo="true"' : ''}>
                     </div>
                   </td>`;
         }
@@ -195,13 +199,11 @@ class HabitTracker {
       const dialog = document.getElementById('statusDialog');
       const statusSelect = document.getElementById('statusSelect');
 
-      const rawValue = statusSelect.value;
-      let selectedStatus = rawValue;
-      if (rawValue === 'true') selectedStatus = true;
-      if (rawValue === 'false') selectedStatus = false;
-
+      const selectedStatus = statusSelect.value;
       const memo = document.getElementById('memoArea').value;
       const { date, item } = dialog.dataset;
+      console.log(dialog.dataset);
+
       this.updateLog(date, item, selectedStatus, memo);
       dialog.close();
     };
@@ -298,7 +300,12 @@ class HabitTracker {
     if (selectDayDisplay) selectDayDisplay.textContent = `${date.replaceAll('-', '/')}`;
 
     const logEntry = this.logs[date]?.[item];
-    const currentStatus = (logEntry && typeof logEntry === 'object') ? String(logEntry.status) : String(logEntry ?? 'none');
+    let currentStatus = logEntry?.status || 'none';
+
+    // 過去の boolean データの互換処理（安全策）
+    if (currentStatus === true) currentStatus = 'done';
+    if (currentStatus === false) currentStatus = 'failed';
+
     const currentMemo = logEntry?.memo || "";
 
     const statusSelect = document.getElementById('statusSelect');
@@ -393,8 +400,9 @@ class HabitTracker {
   // ------------------------------------------
   updateLog(date, itemId, status, memo) {
     if (!this.logs[date]) this.logs[date] = {};
+    const normalizedStatus = (!status || status === 'none') ? 'none' : status;
     this.logs[date][itemId] = {
-      status: (status === 'none') ? undefined : status,
+      status: normalizedStatus,
       memo: memo
     };
     this.saveLogs();

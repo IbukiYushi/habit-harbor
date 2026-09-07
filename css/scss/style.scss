@@ -181,11 +181,26 @@ body {
           height: 100%;
           line-height: v.$cell-height;
           cursor: pointer;
-          &[data-status="true"]::before { content: "◯"; font-size: 1.5rem; }
-          &[data-status="triangle"]::before { content: "△"; font-size: 1.5rem; }
-          &[data-status="false"]::before { content: "×"; font-size: 1.5rem; }
+          &[data-status="done"]::before { content: "◯"; font-size: 1.5rem; }
+          &[data-status="in_progress"]::before { content: "△"; font-size: 1.5rem; }
+          &[data-status="failed"]::before { content: "×"; font-size: 1.5rem; }
           &[data-status="none"] { background: #e0e0e0; }
-          &[data-status="undefined"] { background: #cfcfcf; }
+          &[data-status="undefined"] { background: #ffffff; }
+          &[data-status="none"][data-has-memo="true"] {
+            background: #cfcfcf;
+            // 「メモあり」を示す小さなポッチ
+            position: relative;
+            &::after {
+              content: '';
+              position: absolute;
+              top: 2px;
+              right: 2px;
+              width: 6px;
+              height: 6px;
+              background: v.$color-accent;
+              border-radius: 50%;
+            }
+          }
           @include m.hover-state(0px);
         }
 
@@ -323,13 +338,6 @@ body {
       > .modal-body {
         div {
           margin-block: 24px;
-          // TODO: 後で削除
-          // &.modal-body-select {
-          //   display: flex;
-          //   justify-content: center;
-          //   align-items: center;
-          //   gap: 40px;
-          // }
           &.modal-body-status-select {
             display: flex;
             flex-direction: column;

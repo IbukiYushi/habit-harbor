@@ -89,26 +89,17 @@
       <hr class="modal-hr">
       <div class="modal-body">
         <form class="modal-body-button-form" method="dialog">
-
-          <!-- TODO: 後で削除 -->
-          <!-- <div class="modal-body-select">
-            <label><input type="radio" name="status" value="true">マル</label>
-            <label><input type="radio" name="status" value="false">バツ</label>
-            <label><input type="radio" name="status" value="none">未定</label>
-          </div> -->
           <div class="modal-body-status-select">
             <label for="statusSelect" class="status-select-label">進捗状態</label>
             <div class="select-wrapper">
               <select id="statusSelect" class="status-select-input">
-                <option value="true">◯ マル</option>
-                <option value="triangle">△ サンカク</option>
-                <option value="false">× バツ</option>
+                <option value="done">◯ マル</option>
+                <option value="in_progress">△ サンカク</option>
+                <option value="failed">× バツ</option>
                 <option value="none">- 未定</option>
               </select>
             </div>
           </div>
-
-
           <hr>
           <div class="modal-body-comments">
             <label for="memoArea">備考</label>
