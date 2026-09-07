@@ -95,15 +95,28 @@ class HabitTracker {
             <td colspan="${daysInMonth}"></td>
         </tr>`;
 
-      // TODO項目行
+// TODO項目行
       cat.items.forEach(item => {
         html += `<tr>
                   <td class="sticky-col" data-item-id="${item.id}" data-cat-id="${cat.id}">${item.name}</td>`;
         for (let d = 1; d <= daysInMonth; d++) {
           const dateKey = `${year}-${formatDateComponent(month)}-${formatDateComponent(d)}`;
           const logEntry = this.logs?.[dateKey]?.[item.id];
-          const status = logEntry?.status || 'none';
-          const memo = logEntry?.memo || '';
+
+          let status = 'none';
+          let memo = '';
+
+          if (typeof logEntry === 'object' && logEntry !== null) {
+            if (logEntry.status === true || logEntry.status === 'done') status = 'done';
+            else if (logEntry.status === 'in_progress' || logEntry.status === 'triangle') status = 'in_progress';
+            else if (logEntry.status === false || logEntry.status === 'failed') status = 'failed';
+            else status = 'none';
+            memo = typeof logEntry.memo === 'string' ? logEntry.memo : '';
+          } else if (typeof logEntry === 'boolean') {
+            status = logEntry ? 'done' : 'failed';
+          } else if (typeof logEntry === 'string') {
+            status = logEntry;
+          }
           const hasMemo = (status === 'none' && memo.trim().length > 0);
 
           html += `<td>
@@ -292,7 +305,7 @@ class HabitTracker {
   // ------------------------------------------
   // 各ダイアログの表示処理 (Modal Openers)
   // ------------------------------------------
-  openEditDialog(target) {
+openEditDialog(target) {
     const { date, item } = target.dataset;
     const dialog = document.getElementById('statusDialog');
     dialog.dataset.date = date;
@@ -302,13 +315,18 @@ class HabitTracker {
     if (selectDayDisplay) selectDayDisplay.textContent = `${date.replaceAll('-', '/')}`;
 
     const logEntry = this.logs[date]?.[item];
-    let currentStatus = logEntry?.status || 'none';
 
-    // 過去の boolean データの互換処理（安全策）
-    if (currentStatus === true) currentStatus = 'done';
-    if (currentStatus === false) currentStatus = 'failed';
+    let currentStatus = 'none';
+    let currentMemo = '';
 
-    const currentMemo = logEntry?.memo || "";
+    if (typeof logEntry === 'object' && logEntry !== null) {
+      if (logEntry.status === true || logEntry.status === 'done') currentStatus = 'done';
+      else if (logEntry.status === 'in_progress' || logEntry.status === 'triangle') currentStatus = 'in_progress';
+      else if (logEntry.status === false || logEntry.status === 'failed') currentStatus = 'failed';
+      currentMemo = typeof logEntry.memo === 'string' ? logEntry.memo : '';
+    } else if (typeof logEntry === 'boolean') {
+      currentStatus = logEntry ? 'done' : 'failed';
+    }
 
     const statusSelect = document.getElementById('statusSelect');
     if (statusSelect) statusSelect.value = currentStatus;
