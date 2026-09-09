@@ -2,6 +2,7 @@
 // 外部モジュールの読み込み
 // ==========================================
 import { initialSettings, initialLogs, formatDateComponent } from './constants.js';
+import { exportMonthToCSV } from './csvExporter.js';
 
 // ==========================================
 // メインアプリケーションクラス
@@ -143,6 +144,7 @@ class HabitTracker {
     this.setupDialogSubmitEvents();
     this.setupNavigationEvents();
     this.setupGlobalModalControls();
+    this.setupCSVExportEvent();
   }
 
   // テーブル（メインマトリックス）内のクリックイベント
@@ -302,10 +304,20 @@ class HabitTracker {
     });
   }
 
+  // CSV出力のクリックイベント
+  setupCSVExportEvent() {
+    const csvBtn = document.querySelector('.csv-export-btn');
+    if (csvBtn) {
+      csvBtn.addEventListener('click', () => {
+        exportMonthToCSV(this.settings, this.logs, this.memos);
+      });
+    }
+  }
+
   // ------------------------------------------
   // 各ダイアログの表示処理 (Modal Openers)
   // ------------------------------------------
-openEditDialog(target) {
+  openEditDialog(target) {
     const { date, item } = target.dataset;
     const dialog = document.getElementById('statusDialog');
     dialog.dataset.date = date;
